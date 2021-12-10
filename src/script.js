@@ -82,14 +82,16 @@ const fontLoader = new THREE.FontLoader()
 const ttfLoader = new TTFLoader()
 
 /**
- * Textures
+ * Text
  */
 
-const messageEN = `
-Happy 
-New Year!
+let textYear
+
+const happyNewYear = `
+明けまして
+おめでとう
 `
-const messageYear = `2022`
+const year = `2022`
 
 const messageJP = `
 今年 もよろしく
@@ -99,10 +101,8 @@ const messageJP = `
 fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
   const textMaterial = new THREE.MeshStandardMaterial({
     color: '#D22B2B',
-    // wireframe: true,
   })
-
-  const textGeometry = new THREE.TextBufferGeometry(messageEN, {
+  const textGeometry = new THREE.TextBufferGeometry(year, {
     font: font,
     size: 1,
     height: 0.25,
@@ -115,30 +115,15 @@ fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
   })
   textGeometry.center()
 
-  const textGeometry2 = new THREE.TextBufferGeometry(messageYear, {
-    font: font,
-    size: 1,
-    height: 0.25,
-    curveSegments: 12,
-    bevelEnabled: true,
-    bevelThickness: 0.01,
-    bevelSize: 0.005,
-    bevelOffset: 0,
-    bevelSegments: 5,
-  })
-  textGeometry2.center()
-
   const text = new THREE.Mesh(textGeometry, textMaterial)
-  text.position.z = 0.3
-  text.position.x = -0.1
-  text.position.y = -0.3
-  text.scale.setScalar(0.19)
-  //   text.rotation.z = 0.05
+  text.position.z = 0.4
+  text.position.y = 1.1
+  text.position.x = -0.5
+  text.rotation.z = 0.4
 
-  const text2 = new THREE.Mesh(textGeometry2, textMaterial)
-  text2.position.z = 0.2
-  text2.position.y = 0.4
-  text2.scale.setScalar(0.12)
+  text.scale.setScalar(0.25)
+
+  textYear = text
 
   group.add(text)
 })
@@ -148,7 +133,9 @@ ttfLoader.load('/fonts/MochiyPopOne-Regular.ttf', (json) => {
 
   const textMaterial = new THREE.MeshStandardMaterial({
     color: 'orange',
+    wireframe: true,
   })
+
   const textGeometry = new THREE.TextBufferGeometry(messageJP, {
     font: ttfFont,
     size: 0.5,
@@ -165,10 +152,32 @@ ttfLoader.load('/fonts/MochiyPopOne-Regular.ttf', (json) => {
   const text = new THREE.Mesh(textGeometry, textMaterial)
   text.position.z = 0.3
   text.position.x = -0.1
-  text.position.y = -0.85
-
+  text.position.y = -0.8
   text.scale.setScalar(0.25)
-  group.add(text)
+
+  const textGeometry2 = new THREE.TextBufferGeometry(happyNewYear, {
+    font: ttfFont,
+    size: 0.5,
+    height: 0.15,
+    curveSegments: 12,
+    bevelEnabled: true,
+    bevelThickness: 0.01,
+    bevelSize: 0.005,
+    bevelOffset: 0,
+    bevelSegments: 5,
+  })
+  textGeometry2.center()
+
+  const textMaterial2 = textMaterial.clone()
+  textMaterial2.color = new THREE.Color('#D22B2B')
+
+  const text2 = new THREE.Mesh(textGeometry2, textMaterial2)
+  text2.position.z = 0.3
+  text2.position.x = -0.22
+  text2.position.y = -0.3
+  text2.scale.setScalar(0.28)
+
+  group.add(text, text2)
 })
 
 /***************************************************************************
@@ -178,6 +187,7 @@ let mixer
 let mask
 let sun
 
+const textureLoader = new THREE.TextureLoader()
 const gltfLoader = new GLTFLoader()
 const groupMask = new THREE.Group()
 scene.add(groupMask)
@@ -187,8 +197,8 @@ gltfLoader.load('/models/mask.glb', (object) => {
   console.log('👺', { object })
 
   object.scene.position.z = 0.3
-  object.scene.position.x = 0.3
-  object.scene.position.y = -0.1
+  object.scene.position.x = 0.55
+  object.scene.position.y = -0.25
 
   object.scene.rotation.z = -0.25
   object.scene.scale.setScalar(0.15)
@@ -205,7 +215,7 @@ gltfLoader.load('/models/tree.glb', (object) => {
 
   object.scene.position.z = 0.3
   object.scene.position.y = 0.05
-  object.scene.position.x = -0.6
+  object.scene.position.x = -0.65
 
   object.scene.rotation.y = -Math.PI + 1
 
@@ -234,50 +244,117 @@ gltfLoader.load('/models/fox.glb', (object) => {
 gltfLoader.load('/models/tori.glb', (object) => {
   console.log('🌁', { object })
 
-  // const pointLight = new THREE.PointLight(new THREE.Color('pink'), 1)
-  // object.scene.add(pointLight)
+  textureLoader.load('/textures/matcap/tori_texture.png', (texture) => {
+    const matCap = new THREE.MeshMatcapMaterial({
+      color: new THREE.Color('#ff008f'),
+      matcap: texture,
+      transparent: true,
+      opacity: 1,
+      // blending: THREE.NormalBlending,
+    })
+    object.scene.traverse((node) => {
+      if (node.isMesh) {
+        node.material = matCap
+
+        node.material
+        console.log({ material: node.material })
+      }
+    })
+
+    object.scene.position.z = 0.25
+    object.scene.position.y = 0.05
+    object.scene.position.x = 0.2
+
+    object.scene.scale.setScalar(0.8)
+
+    scene.add(object.scene)
+
+    const toriFolder = pane.addFolder({ title: 'Tori' })
+    // toriFolder.addInput(object.scene.position, 'z')
+  })
+})
+// Chihiro
+gltfLoader.load('/models/chihiro.glb', (object) => {
+  console.log('Chihiro', { object })
 
   object.scene.position.z = 0.4
-  object.scene.position.y = 0.1
-  object.scene.position.x = 0.3
-  object.scene.rotation.y = Math.PI * 1.5
-  object.scene.scale.setScalar(0.0017)
+  object.scene.position.y = 0.05
+  object.scene.position.x = 0.13
 
-  const clone = object.scene.clone()
-  clone.position.z = 0.6
-  clone.scale.setScalar(0.0011)
+  object.scene.scale.setScalar(0.15)
 
-  scene.add(object.scene, clone)
+  scene.add(object.scene)
 })
 
 /***************************************************************************
  * Light
  */
-const ambientLight = new THREE.AmbientLight('white', 0.95)
+const ambientLight = new THREE.AmbientLight('white', 1)
 scene.add(ambientLight)
 
 const directionalLight = new THREE.DirectionalLight('white', 1.8)
-directionalLight.position.set(0.9, 1.6, -0.3)
+directionalLight.position.set(-0.65, 1.0, 0.2)
 scene.add(directionalLight)
 
-// const directionalLight2 = new THREE.DirectionalLight('white', 2)
-// directionalLight2.position.set(0.9, 1.6, -0.3)
-// scene.add(directionalLight2)
+const pointLight = new THREE.SpotLight('yellow', 0.9)
+const helperPointLight = new THREE.SpotLightHelper(pointLight, 0.1)
+pointLight.position.set(0.22, 0.87, 0.43)
+// scene.add(pointLight, helperPointLight)
 
 const ambientLightFolder = pane.addFolder({ title: 'Ambient Light' })
 const directionalLightFolder = pane.addFolder({ title: 'Directional Light' })
+const pointLightFolder = pane.addFolder({ title: 'Point Light' })
 
 ambientLightFolder.addInput(ambientLight, 'intensity', {
   step: 0.01,
   min: 0,
   max: 10,
 })
+
 directionalLightFolder.addInput(directionalLight, 'intensity', {
   step: 0.01,
   min: 0,
   max: 10,
 })
-directionalLightFolder.addInput(directionalLight, 'position')
+directionalLightFolder.addInput(directionalLight.position, 'x', {
+  step: 0.01,
+  min: -10,
+  max: 10,
+})
+directionalLightFolder.addInput(directionalLight.position, 'y', {
+  step: 0.01,
+  min: -10,
+  max: 10,
+})
+directionalLightFolder.addInput(directionalLight.position, 'z', {
+  step: 0.01,
+  min: -10,
+  max: 10,
+})
+
+// pointLightFolder.addInput(pointLight, 'intensity', {
+//   step: 0.01,
+//   min: 0,
+//   max: 10,
+// })
+// pointLightFolder.addInput(pointLight.position, 'x', {
+//   step: 0.01,
+//   min: -10,
+//   max: 10,
+// })
+// pointLightFolder.addInput(pointLight.position, 'y', {
+//   step: 0.01,
+//   min: -10,
+//   max: 10,
+// })
+// pointLightFolder.addInput(pointLight.position, 'z', {
+//   step: 0.01,
+//   min: -10,
+//   max: 10,
+// })
+// pointLightFolder.addInput(pointLight.rotation, 'x')
+// pointLightFolder.addInput(pointLight.rotation, 'y')
+// pointLightFolder.addInput(pointLight.rotation, 'z')
 
 /**
  * Renderer
@@ -287,6 +364,10 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true,
   alpha: true,
 })
+// renderer.outputEncoding = THREE.RGBEEncoding
+// renderer.physicallyCorrectLights = true
+// renderer.toneMapping = THREE.FilmicToneMapping
+// renderer.toneMappingExposure = 1.5
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
@@ -303,6 +384,11 @@ const tick = () => {
 
   // Update Mixer
   mixer?.update(deltaTime * 2)
+
+  // Update Text
+  if (textYear) {
+    textYear.position.y = textYear.position.y + Math.sin(elapsedTime) * 0.0005
+  }
 
   // Update Mask
   if (mask) {
