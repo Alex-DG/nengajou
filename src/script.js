@@ -57,7 +57,7 @@ scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
-controls.enableZoom = false
+controls.enableZoom = true
 controls.enableDamping = true
 
 // scene.add(cube)
@@ -84,12 +84,13 @@ const ttfLoader = new TTFLoader()
 /**
  * Textures
  */
-const textureLoader = new THREE.TextureLoader()
 
 const messageEN = `
 Happy 
 New Year!
 `
+const messageYear = `2022`
+
 const messageJP = `
 今年 もよろしく
 おねがいします
@@ -114,12 +115,31 @@ fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
   })
   textGeometry.center()
 
+  const textGeometry2 = new THREE.TextBufferGeometry(messageYear, {
+    font: font,
+    size: 1,
+    height: 0.25,
+    curveSegments: 12,
+    bevelEnabled: true,
+    bevelThickness: 0.01,
+    bevelSize: 0.005,
+    bevelOffset: 0,
+    bevelSegments: 5,
+  })
+  textGeometry2.center()
+
   const text = new THREE.Mesh(textGeometry, textMaterial)
   text.position.z = 0.3
   text.position.x = -0.1
   text.position.y = -0.3
   text.scale.setScalar(0.19)
   //   text.rotation.z = 0.05
+
+  const text2 = new THREE.Mesh(textGeometry2, textMaterial)
+  text2.position.z = 0.2
+  text2.position.y = 0.4
+  text2.scale.setScalar(0.12)
+
   group.add(text)
 })
 
@@ -210,6 +230,25 @@ gltfLoader.load('/models/fox.glb', (object) => {
   object.scene.scale.setScalar(0.7)
   scene.add(object.scene)
 })
+// Tori
+gltfLoader.load('/models/tori.glb', (object) => {
+  console.log('🌁', { object })
+
+  // const pointLight = new THREE.PointLight(new THREE.Color('pink'), 1)
+  // object.scene.add(pointLight)
+
+  object.scene.position.z = 0.4
+  object.scene.position.y = 0.1
+  object.scene.position.x = 0.3
+  object.scene.rotation.y = Math.PI * 1.5
+  object.scene.scale.setScalar(0.0017)
+
+  const clone = object.scene.clone()
+  clone.position.z = 0.6
+  clone.scale.setScalar(0.0011)
+
+  scene.add(object.scene, clone)
+})
 
 /***************************************************************************
  * Light
@@ -217,9 +256,13 @@ gltfLoader.load('/models/fox.glb', (object) => {
 const ambientLight = new THREE.AmbientLight('white', 0.95)
 scene.add(ambientLight)
 
-const directionalLight = new THREE.DirectionalLight('white', 2)
+const directionalLight = new THREE.DirectionalLight('white', 1.8)
 directionalLight.position.set(0.9, 1.6, -0.3)
 scene.add(directionalLight)
+
+// const directionalLight2 = new THREE.DirectionalLight('white', 2)
+// directionalLight2.position.set(0.9, 1.6, -0.3)
+// scene.add(directionalLight2)
 
 const ambientLightFolder = pane.addFolder({ title: 'Ambient Light' })
 const directionalLightFolder = pane.addFolder({ title: 'Directional Light' })
