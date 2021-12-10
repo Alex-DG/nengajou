@@ -4,10 +4,14 @@ import * as THREE from 'three'
 import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { Pane } from 'tweakpane'
 
 /***************************************************************************
  * Base
  */
+// Debug
+const pane = new Pane({ title: 'Scene' })
+
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -210,11 +214,27 @@ gltfLoader.load('/models/fox.glb', (object) => {
 /***************************************************************************
  * Light
  */
-const ambientLight = new THREE.AmbientLight('white', 0.8)
+const ambientLight = new THREE.AmbientLight('white', 0.95)
 scene.add(ambientLight)
 
 const directionalLight = new THREE.DirectionalLight('white', 2)
+directionalLight.position.set(0.9, 1.6, -0.3)
 scene.add(directionalLight)
+
+const ambientLightFolder = pane.addFolder({ title: 'Ambient Light' })
+const directionalLightFolder = pane.addFolder({ title: 'Directional Light' })
+
+ambientLightFolder.addInput(ambientLight, 'intensity', {
+  step: 0.01,
+  min: 0,
+  max: 10,
+})
+directionalLightFolder.addInput(directionalLight, 'intensity', {
+  step: 0.01,
+  min: 0,
+  max: 10,
+})
+directionalLightFolder.addInput(directionalLight, 'position')
 
 /**
  * Renderer
