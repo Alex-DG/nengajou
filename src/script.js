@@ -244,9 +244,9 @@ gltfLoader.load('/models/fox.glb', (object) => {
 gltfLoader.load('/models/tori.glb', (object) => {
   console.log('🌁', { object })
 
-  textureLoader.load('/textures/matcap/tori_texture.png', (texture) => {
+  textureLoader.load('/textures/matcap/4.png', (texture) => {
     const matCap = new THREE.MeshMatcapMaterial({
-      color: new THREE.Color('#ff008f'),
+      // color: new THREE.Color('#ff008f'),
       matcap: texture,
       transparent: true,
       opacity: 1,
