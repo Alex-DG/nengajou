@@ -35,6 +35,9 @@ loadingManager.onProgress = (_, loaded, total) => {
       .onUpdate(() => {
         loadingScreen.style.opacity = opacity.value
       })
+      .onComplete(() => {
+        loadingScreen.style.display = 'none'
+      })
       .easing(TWEEN.Easing.Quadratic.Out)
 
     tween.start()
