@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Three.js - Template - Simple</title>
-</head>
-<body>
+  </head>
+  <body>
+    <div id="loading-screen">
+      <div class="drawing-holder bounce animated">
+        <div class="cat-face">
+          <div class="cat-eyes"></div>
+          <div class="cat-nose"></div>
+          <div class="cat-mouth"></div>
+        </div>
+      </div>
+
+      <div id="progress">
+        <span>0%</span>
+      </div>
+    </div>
     <canvas class="webgl"></canvas>
-</body>
+  </body>
 </html>
