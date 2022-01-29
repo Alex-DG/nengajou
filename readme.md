@@ -1,4 +1,4 @@
-# Three.js - Template - Simple
+# Three.js - Nengajou
 
 ## Setup
 
